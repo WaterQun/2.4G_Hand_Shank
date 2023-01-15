@@ -3,15 +3,10 @@
 
 ---
 
-## 一、项目文件说明/Overview
-### 1、Hardware
-Hardware文件夹内是2.4G手柄里面用到的所有电路的原理图和PCB文件，目前提供的是Altium Designer软件格式的源文件用于后续自己修改以及提供给厂家进行加工。
-
-### 2、Software
-Software中提供的是2.4G手柄的MDK代码，可以使用keil软件打开项目工程进行仿真烧录，或者直接使用FlyMCU对OBJ输出文件夹中的Hex文件进行烧录。
-
-### 3、Documents
-相关的参考文件，包括芯片的Datasheet等，用于后续修改参考。
+## 一、项目说明/Overview
+- **关于硬件**，Hardware文件夹内是2.4G手柄里面用到的所有电路的原理图和PCB文件，目前提供的是Altium Designer软件格式的源文件用于后续自己修改以及提供给厂家进行加工。
+- **关于软件**，Software中提供的是2.4G手柄的MDK代码，可以使用keil软件打开项目工程进行仿真烧录，或者直接使用FlyMCU对OBJ输出文件夹中的Hex文件进行烧录。
+- 另外，在**Documents**中含有相关的参考文件，包括芯片的Datasheet等，用于后续修改参考。
 
 ## 二、硬件说明/Hardware
 工作电压：3.3V～6V
