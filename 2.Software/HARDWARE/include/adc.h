@@ -1,9 +1,3 @@
-/*
- * adc.h
- *
- * Created on: 2022年04月26日
- *     Author: @假人
- */
 #ifndef _ADC_H
 #define _ADC_H
 

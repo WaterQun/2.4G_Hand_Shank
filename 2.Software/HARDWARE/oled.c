@@ -112,6 +112,7 @@ void OLED_Display_Off(void)
 	OLED_WR_Com(0X10);  //DCDC OFF
 	OLED_WR_Com(0XAE);  //DISPLAY OFF
 }
+
 //清屏函数,清完屏,整个屏幕是黑色的!和没点亮一样!!!	  
 void OLED_Clear(void)  
 {  
@@ -119,6 +120,7 @@ void OLED_Clear(void)
 	for(i=0;i<8;i++)for(n=0;n<128;n++)OLED_GRAM[n][i]=0X00;  
 	OLED_Refresh_Gram();//更新显示
 }
+
 //画点 
 //x:0~127
 //y:0~63
@@ -133,6 +135,7 @@ void OLED_DrawPoint(u8 x,u8 y,u8 t)
 	if(t)OLED_GRAM[x][pos]|=temp;
 	else OLED_GRAM[x][pos]&=~temp;	    
 }
+
 //x1,y1,x2,y2 填充区域的对角坐标
 //确保x1<=x2;y1<=y2 0<=x1<=127 0<=y1<=63	 	 
 //dot:0,清空;1,填充	  
@@ -145,6 +148,7 @@ void OLED_Fill(u8 x1,u8 y1,u8 x2,u8 y2,u8 dot)
 	}													    
 	OLED_Refresh_Gram();//更新显示
 }
+
 //在指定位置显示一个字符,包括部分字符
 //x:0~127
 //y:0~63
@@ -177,6 +181,7 @@ void OLED_ShowChar(u8 x,u8 y,u8 chr,u8 size,u8 mode)
 		}  	 
     }          
 }
+
 //m^n函数
 u32 mypow(u8 m,u8 n)
 {
@@ -184,6 +189,7 @@ u32 mypow(u8 m,u8 n)
 	while(n--)result*=m;    
 	return result;
 }
+
 //显示2个数字
 //x,y :起点坐标	 
 //len :数字的位数
@@ -209,6 +215,7 @@ void OLED_ShowNum(u8 x,u8 y,u32 num,u8 len,u8 size)
 	 	OLED_ShowChar(x+(size/2)*t,y,temp+'0',size,1); 
 	}
 } 
+
 //显示字符串
 //x,y:起点坐标  
 //size:字体大小 
@@ -225,6 +232,7 @@ void OLED_ShowString(u8 x,u8 y,const u8 *p,u8 size)
     }  
 	
 }
+
 //初始化SSD1306	
 void OLED_init(void)
 {
@@ -265,12 +273,12 @@ void OLED_init(void)
 	OLED_Clear();
 }
 
-/*
- * 函数名：OLED_Display_Init_String
- * 功  能：显示初始字符
- * 参  数：无
- * 返回值：无
- */ 
+/**************************************************************************
+ * 函数  名：OLED_Display_Init_String
+ * 函数功能：显示初始字符
+ * 入口参数：无
+ * 返回  值：无
+**************************************************************************/
 void OLED_Display_Init_String(void)
 {
 	OLED_ShowString(0,0 ,"pitch:",12);
@@ -312,12 +320,12 @@ void OLED_Display_Adc_channel_Value(void)
 
 #include "nrf.h"
 
-/*
- * 函数名：OLED_Display_Euler_Angle
- * 功  能：显示接收到的欧拉角的数据
- * 参  数：无
- * 返回值：无
- */ 
+/**************************************************************************
+ * 函数  名：OLED_Display_Euler_Angle
+ * 函数功能：显示接收到的欧拉角的数据
+ * 入口参数：无
+ * 返回  值：无
+**************************************************************************/
 void OLED_Display_Euler_Angle(void)
 {
 	short pitch_v = To_int(rx_buf[2],rx_buf[3]);
@@ -358,12 +366,12 @@ void OLED_Display_Euler_Angle(void)
 	OLED_ShowNum(66,24,yaw_v%100,2,12);
 }
 
-/*
- * 函数名：OLED_Display_Power_Volt
- * 功  能：显示飞机反馈的电压数据
- * 参  数：无
- * 返回值：无
- */ 
+/**************************************************************************
+ * 函数  名：OLED_Display_Power_Volt
+ * 函数功能：显示飞机反馈的电压数据
+ * 入口参数：无
+ * 返回  值：无
+**************************************************************************/
 void OLED_Display_Power_Volt(void)
 {
 	short volt_v;
@@ -389,18 +397,13 @@ void OLED_Display_Power_Volt(void)
 	OLED_ShowNum(66,50,volt_v%100,2,12);
 }
 
-/*
- * 函数名：OLED_Display_Pid_Frequency
- * 功  能：显示PID运行频率
- * 参  数：无
- * 返回值：无
- */ 
+/**************************************************************************
+ * 函数  名：OLED_Display_Pid_Frequency
+ * 函数功能：显示PID运行频率
+ * 入口参数：无
+ * 返回  值：无
+**************************************************************************/
 void OLED_Display_Pid_Frequency(void)
 {
 	OLED_ShowNum(96,50,rx_buf[8],3,12);
 }
-
-
-
-
-

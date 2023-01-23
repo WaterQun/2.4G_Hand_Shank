@@ -3,10 +3,13 @@
 #include "oled.h"
 
 u16 ADC1_value[4];
-/*
- * ADC1初始化
- * ADC1通道1\2\3\4软件启动扫描转换模式
- */
+
+/**************************************************************************
+ * 函数  名：ADC_ADC1_init
+ * 函数功能：ADC1初始化,ADC1通道1\2\3\4软件启动扫描转换模式
+ * 入口参数：无
+ * 返回  值：无 
+**************************************************************************/
 void ADC_ADC1_init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -57,10 +60,12 @@ void ADC_ADC1_init(void)
 	ADC_SoftwareStartConvCmd(ADC1,ENABLE);	//开启ADC1转换
 }
 
-/*
- * ADC1的DMA通道初始化，即DMA1通道1
- * DMA1通道1初始化从外设到内存，将ADC转换的数据存放至ADC1_value[]
- */
+/**************************************************************************
+ * 函数  名：ADC_DMA1Channel1_init
+ * 函数功能：ADC1的DMA通道初始化,从外设到内存，将ADC转换的数据存放至ADC1_value[]
+ * 入口参数：无
+ * 返回  值：无 
+**************************************************************************/
 void ADC_DMA1Channel1_init(void)
 {
 	DMA_InitTypeDef DMA_InitStruct;
@@ -84,12 +89,12 @@ void ADC_DMA1Channel1_init(void)
 	DMA_Cmd(DMA1_Channel1,ENABLE);									//使能DMA1通道1
 }
 
-/*
- * 函数名：ADC_Throttle_Protection_delay
- * 功  能：油门解锁延时，共3s
- * 参  数：pro_bit -> 是否第一次调用
- * 返回值：0 -> 延时完成	其它 -> 延时未完成
- */ 
+/**************************************************************************
+ * 函数  名：ADC_Throttle_Protection_delay
+ * 函数功能：油门解锁延时，共3s
+ * 入口参数：是否第一次调用(pro_bit)
+ * 返回  值：0 -> 延时完成	其它 -> 延时未完成 
+**************************************************************************/
 u8 ADC_Throttle_Protection_delay(u8 pro_bit)
 {
 	static short delay_i;
@@ -107,12 +112,12 @@ u8 ADC_Throttle_Protection_delay(u8 pro_bit)
 	return 0;
 }
 
-/*
- * 函数名：Throttle_Protection
- * 功  能：油门保护，使用油门需要先给最低油门连续三秒，否则油门不起作用。
- * 参  数：*state -> 油门解锁标志
- * 返回值：无
- */ 
+/**************************************************************************
+ * 函数  名：ADC_Throttle_Protection
+ * 函数功能：油门保护，使用油门需要先给最低油门连续三秒，否则油门不起作用。
+ * 入口参数：油门解锁标志(*state)
+ * 返回  值：无
+**************************************************************************/
 void ADC_Throttle_Protection(u8 *state)
 {
 	u8 adc_pro = 1;
@@ -138,7 +143,3 @@ void ADC_Throttle_Protection(u8 *state)
 		}
 	}
 }
-
-
-
-

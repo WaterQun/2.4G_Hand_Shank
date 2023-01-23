@@ -7,7 +7,12 @@ const u8 RX_ADDRESS[RX_ADR_WIDTH]={0x66,0x66,0x66,0x66,0x66};	//接收地址
 u8 rx_buf[RX_PLOAD_WIDTH];	//定义接收数据数组
 u8 tx_buf[TX_PLOAD_WIDTH];	//定义发送数据数组
 
-//初始化SPI2，用于NRF的通信
+/**************************************************************************
+ * 函数  名：Nrf_SPI2_Init
+ * 函数功能：初始化SPI2，用于NRF的通信
+ * 入口参数：无
+ * 返回  值：无 
+**************************************************************************/
 void Nrf_SPI2_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -24,42 +29,49 @@ void Nrf_SPI2_Init(void)
 	SPI_Cmd(SPI2, DISABLE);	//关闭SPI2
 
 	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;  //设置SPI单向或者双向的数据模式:SPI设置为双线双向全双工
-	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;		//设置SPI工作模式:设置为主SPI
-	SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;		//设置SPI的数据大小:SPI发送接收8位帧结构
-	SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;		//选择了串行时钟的稳态:空闲时钟低
-	SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;	//数据捕获于第一个时钟沿
-	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;		//NSS信号由硬件（NSS管脚）还是软件（使用SSI位）管理:内部NSS信号有SSI位控制
-	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256;		//定义波特率预分频的值:波特率预分频值为256
-	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;	//指定数据传输从MSB位还是LSB位开始:数据传输从MSB位开始
-	SPI_InitStructure.SPI_CRCPolynomial = 7;	//CRC值计算的多项式
-	SPI_Init(SPI2, &SPI_InitStructure);  //根据SPI_InitStruct中指定的参数初始化外设SPIx寄存器
+	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;						//设置SPI工作模式:设置为主SPI
+	SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;					//设置SPI的数据大小:SPI发送接收8位帧结构
+	SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;							//选择了串行时钟的稳态:空闲时钟低
+	SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;						//数据捕获于第一个时钟沿
+	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;							//NSS信号由硬件（NSS管脚）还是软件（使用SSI位）管理:内部NSS信号有SSI位控制
+	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256;//定义波特率预分频的值:波特率预分频值为256
+	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;					//指定数据传输从MSB位还是LSB位开始:数据传输从MSB位开始
+	SPI_InitStructure.SPI_CRCPolynomial = 7;							//CRC值计算的多项式
+	SPI_Init(SPI2, &SPI_InitStructure);  								//根据SPI_InitStruct中指定的参数初始化外设SPIx寄存器
 	
 	SPI2_SetSpeed(SPI_BaudRatePrescaler_8);	//设置SPI2通信波特率
 	
-	SPI_Cmd(SPI2, ENABLE); //使能SPI外设
+	SPI_Cmd(SPI2, ENABLE); 					//使能SPI外设
 	
-//	SPI1_ReadWriteByte(0xff);//启动传输		
+	//SPI1_ReadWriteByte(0xff);				//启动传输		
 }
 
-//SPI 速度设置函数
-//SpeedSet:
-//SPI_BaudRatePrescaler_2   2分频   (SPI 36M@sys 72M)
-//SPI_BaudRatePrescaler_8   8分频   (SPI 9M@sys 72M)
-//SPI_BaudRatePrescaler_16  16分频  (SPI 4.5M@sys 72M)
-//SPI_BaudRatePrescaler_256 256分频 (SPI 281.25K@sys 72M)
+/**************************************************************************
+ * 函数  名：SPI2_SetSpeed
+ * 函数功能：SPI 速度设置函数
+ * 入口参数：SpeedSet
+ * 			SPI_BaudRatePrescaler_2   2分频   (SPI 36M@sys 72M)
+ * 			SPI_BaudRatePrescaler_8   8分频   (SPI 9M@sys 72M)
+ * 			SPI_BaudRatePrescaler_16  16分频  (SPI 4.5M@sys 72M)
+ * 			SPI_BaudRatePrescaler_256 256分频 (SPI 281.25K@sys 72M)
+ * 返回  值：无 
+**************************************************************************/
 void SPI2_SetSpeed(u8 SpeedSet)
 {
 	//SPI_InitStructure.SPI_BaudRatePrescaler = SpeedSet ;
   	//SPI_Init(SPI1, &SPI_InitStructure);
-//	SPI_Cmd(SPI1,ENABLE);
+	//SPI_Cmd(SPI1,ENABLE);
 	SPI2->CR1&=0XFFC7; 
 	SPI2->CR1|=SpeedSet;	//设置SPI速度  
 	SPI2->CR1|=1<<6; 		//SPI设备使能 
 } 
 
-//SPIx 读写一个字节
-//TxData:要写入的字节
-//返回值:读取到的字节
+/**************************************************************************
+ * 函数  名：SPI2_ReadWriteByte
+ * 函数功能：SPIx 读写一个字节
+ * 入口参数：要写入的字节(TxData)
+ * 返回  值：读取到的字节 
+**************************************************************************/
 u8 SPI2_ReadWriteByte(u8 TxData)
 {		
 	u8 retry=0;				 	
@@ -79,7 +91,12 @@ u8 SPI2_ReadWriteByte(u8 TxData)
 	return SPI_I2S_ReceiveData(SPI2); //返回通过SPIx最近接收的数据					    
 }
 
-//NRF所用到IO口初始化
+/**************************************************************************
+ * 函数  名：Nrf_GPIO_Init
+ * 函数功能：NRF所用到IO口初始化
+ * 入口参数：无
+ * 返回  值：无 
+**************************************************************************/
 void Nrf_GPIO_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -99,8 +116,13 @@ void Nrf_GPIO_Init(void)
 	GPIO_Init(Nrf_IRQ_Port, &GPIO_InitStructure); //初始化IO口
 }
 
-//检测24L01是否存在
-//返回值:0，成功;1，失败	
+/**************************************************************************
+ * 函数  名：Nrf_Check
+ * 函数功能：检测24L01是否存在
+ * 入口参数：无
+ * 返回  值：	0,成功;
+ * 				1,失败.
+**************************************************************************/
 u8 Nrf_Check(void)
 {
 	u8 buf[5]={0XA5,0XA5,0XA5,0XA5,0XA5};
@@ -112,9 +134,12 @@ u8 Nrf_Check(void)
 	return 0;		 //检测到24L01
 }
 
-//SPI写寄存器
-//reg:指定寄存器地址
-//value:写入的值
+/**************************************************************************
+ * 函数  名：Nrf_Write_Reg
+ * 函数功能：SPI写寄存器
+ * 入口参数：指定寄存器地址(reg),写入的值(value)
+ * 返回  值：状态值 
+**************************************************************************/
 u8 Nrf_Write_Reg(u8 reg,u8 value)
 {
 	u8 status;	
@@ -125,8 +150,12 @@ u8 Nrf_Write_Reg(u8 reg,u8 value)
   	return(status);       			//返回状态值
 }
 
-//读取SPI寄存器值
-//reg:要读的寄存器
+/**************************************************************************
+ * 函数  名：Nrf_Read_Reg
+ * 函数功能：读取SPI寄存器值
+ * 入口参数：要读的寄存器(reg)
+ * 返回  值：状态值 
+**************************************************************************/
 u8 Nrf_Read_Reg(u8 reg)
 {
 	u8 reg_val;	    
@@ -137,11 +166,12 @@ u8 Nrf_Read_Reg(u8 reg)
   	return(reg_val);           //返回状态值
 }
 
-//在指定位置读出指定长度的数据
-//reg:寄存器(位置)
-//*pBuf:数据指针
-//len:数据长度
-//返回值,此次读到的状态寄存器值 
+/**************************************************************************
+ * 函数  名：Nrf_Read_Buf
+ * 函数功能：在指定位置读出指定长度的数据
+ * 入口参数：寄存器地址(reg),数据指针(*pBuf),数据长度(len)
+ * 返回  值：此次读到的状态寄存器值 
+**************************************************************************/
 u8 Nrf_Read_Buf(u8 reg,u8 *pBuf,u8 len)
 {
 	u8 status,u8_ctr;	       
@@ -152,11 +182,12 @@ u8 Nrf_Read_Buf(u8 reg,u8 *pBuf,u8 len)
   	return status;        //返回读到的状态值
 }
 
-//在指定位置写指定长度的数据
-//reg:寄存器(位置)
-//*pBuf:数据指针
-//len:数据长度
-//返回值,此次读到的状态寄存器值
+/**************************************************************************
+ * 函数  名：Nrf_Write_Buf
+ * 函数功能：在指定位置写指定长度的数据
+ * 入口参数：寄存器地址(reg),数据指针(*pBuf),数据长度(len)
+ * 返回  值：此次读到的状态寄存器值 
+**************************************************************************/
 u8 Nrf_Write_Buf(u8 reg, u8 *pBuf, u8 len)
 {
 	u8 status,u8_ctr;	    
@@ -167,18 +198,25 @@ u8 Nrf_Write_Buf(u8 reg, u8 *pBuf, u8 len)
   	return status;          //返回读到的状态值
 }	
 
-//启动NRF24L01发送一次数据
-//txbuf:待发送数据首地址
-//返回值:发送完成状况
+/**************************************************************************
+ * 函数  名：Nrf_TxPacket_AP
+ * 函数功能：启动NRF24L01发送一次数据（自动应答）
+ * 入口参数：数据指针(*pBuf),数据长度(len)
+ * 返回  值：无
+**************************************************************************/
 void Nrf_TxPacket_AP(u8 *pBuf, u8 len)		//自动应答时使用
 {
 	NRF24L01_CE=0;	
-	Nrf_Write_Buf(0xa8, pBuf, len); 			 // 装载数据
-	NRF24L01_CE=1;		 //置高CE
+	Nrf_Write_Buf(0xa8, pBuf, len); 		// 装载数据
+	NRF24L01_CE=1;		 					//置高CE
 }
 
-//初始化Nrf24l01
-//根据定义初始化Nrf为相应的模式
+/**************************************************************************
+ * 函数  名：Nrf24l01_init
+ * 函数功能：根据定义初始化Nrf为相应的模式
+ * 入口参数：无
+ * 返回  值：无
+**************************************************************************/
 void Nrf24l01_init()
 {
 	Nrf_SPI2_Init();	//SPI2初始化
@@ -234,7 +272,12 @@ void Nrf24l01_init()
 	NRF24L01_CSN = 0;	//SPI3片选引脚拉低
 }
 
-//检查Nrf是否接收到数据
+/**************************************************************************
+ * 函数  名：Nrf_Check_Event
+ * 函数功能：检查Nrf是否接收到数据
+ * 入口参数：无
+ * 返回  值：无
+**************************************************************************/
 void Nrf_Check_Event(void)
 {
     u8 sta = Nrf_Read_Reg(NRF_READ_REG + STATUS);
@@ -253,9 +296,12 @@ void Nrf_Check_Event(void)
     Nrf_Write_Reg(NRF_WRITE_REG + STATUS, sta);
 }
 
-//启动NRF24L01发送一次数据
-//txbuf:待发送数据首地址
-//返回值:发送完成状况
+/**************************************************************************
+ * 函数  名：Nrf_TxPacket
+ * 函数功能：启动NRF24L01发送一次数据
+ * 入口参数：数据指针(*pBuf),数据长度(len)
+ * 返回  值：无
+**************************************************************************/
 void Nrf_TxPacket(uint8_t * pBuf, uint8_t len)		//带ACK应答数据包时用
 {
 	NRF24L01_CE=0;		 //StandBy I模式		
@@ -264,19 +310,15 @@ void Nrf_TxPacket(uint8_t * pBuf, uint8_t len)		//带ACK应答数据包时用
 	NRF24L01_CE=1;		 //置高CE，激发数据发送
 }
 
-/*
- * 函数名：Nrf_Clear_Fifo
- * 参  数：*buf -> 要清空的数据地址		len -> 清空数据长度
- * 返回值：无
- */
+/**************************************************************************
+ * 函数  名：Nrf_Clear_Fifo
+ * 函数功能：清空指定位置指定长度的数据
+ * 入口参数：要清空的数据地址(*buf),清空数据长度(len)
+ * 返回  值：无
+**************************************************************************/
 void Nrf_Clear_Fifo(u8 *buf, u8 len)
 {
 	u8 i;
 	for(i=0; i<len; i++)
 		buf[i] = 0;
 }
-
-
-
-
-
